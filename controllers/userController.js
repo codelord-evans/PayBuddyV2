@@ -1,19 +1,17 @@
-const User = require('../models/user');
+const User = require('../models/User')
+const asyncHandler = require('express-async-handler')
+const bcrypt = require('bcrypt')
 
-const createNewUser = async (req, res) => {
+// @desc Get all users
+// @route GET /users
+// @access Private
+
+// Create a new user
+exports.createUser = async (req, res) => {
   try {
     const { username, password } = req.body;
-
-    // Check if the username already exists
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ message: 'Username already exists' });
-    }
-
-    // Create a new user
     const newUser = new User({ username, password });
     await newUser.save();
-
     res.status(201).json({ message: 'User created successfully!' });
   } catch (error) {
     console.error(error);
@@ -21,11 +19,11 @@ const createNewUser = async (req, res) => {
   }
 };
 
-const getUserById = async (req, res) => {
+// Get user by ID
+exports.getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId);
-
     if (!user) {
       res.status(404).json({ message: 'User not found' });
     } else {
@@ -36,5 +34,3 @@ const getUserById = async (req, res) => {
     res.status(500).json({ message: 'Error retrieving user' });
   }
 };
-
-module.exports = { createNewUser, getUserById };
