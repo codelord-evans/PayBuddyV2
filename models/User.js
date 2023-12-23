@@ -6,3 +6,7 @@ const userSchema = new mongoose.Schema({
     balance: {type: Number, default: 0},
     // more data to be added later.
 })
+
+const User = mongoose.model('User', userSchema)
+
+module.exports = User;
