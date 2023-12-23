@@ -60,7 +60,6 @@ app.get('/users/:id', async (req, res) => {
     const userId = req.params.id;
     // Your logic to retrieve user information goes here
     // For example, you can use Mongoose to find a user by ID
-    // const User = require('./models/User');
     const user = await User.findById(userId);
     if (!user) {
       res.status(404).json({ message: 'User not found' });
