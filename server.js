@@ -44,7 +44,7 @@ app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
     // Your user creation logic goes here
     // For example, you can use Mongoose to create a new user
-    // const User = require('../models/User');
+    
     const newUser = new User({ username, password });
     await newUser.save();
     res.status(201).json({ message: 'User created successfully!' });
