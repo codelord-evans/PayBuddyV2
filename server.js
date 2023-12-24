@@ -28,6 +28,9 @@ app.use(express.json());
 
 app.use(cookieParser());
 
+app.use(express.static(path.join(__dirname, 'views')));
+
+
 app.use('/', express.static(path.join(__dirname, 'public')));
 
 // Example middleware to authenticate user using JWT
@@ -35,7 +38,7 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use('/', require('./routes/root'));
-app.use('/user', require('./routes/userRoutes'));
+// app.use('/user', require('./routes/userRoutes'));
 
 // Handle POST requests to create a new user
 app.post('/signup', async (req, res) => {
