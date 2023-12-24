@@ -9,10 +9,11 @@ const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
 const connectDB = require('./config/dbConn');
 const mongoose = require('mongoose');
+
+const bodyParser = require('body-parser');
 // const jwt = require('jsonwebtoken');
 // const { authenticateUser } = require('./middleware/authenticate');
 
-const User = require('./models/User');
 
 const PORT = process.env.PORT || 3500;
 
@@ -36,44 +37,38 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 // Example middleware to authenticate user using JWT
 // app.use(authenticateUser);
 
+
+// Use body-parser middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// Handle GET request for the signup page
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'signup.html'));
+});
+
+// Handle POST request for user registration
+app.post('/signup', async (req, res) => {
+  // Extract user data from the request
+  const { username, password } = req.body;
+
+  // Create a new user in the database (replace User with your actual model)
+  const User = require('./models/User');
+  try {
+    const newUser = new User({ username, password });
+    await newUser.save();
+    res.status(201).send('User created successfully!');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error creating user');
+  }
+});
+
+
 // Routes
 app.use('/', require('./routes/root'));
 // app.use('/user', require('./routes/userRoutes'));
 
-// Handle POST requests to create a new user
-app.post('/signup', async (req, res) => {
-  // Implement user creation logic based on your user model
-  try {
-    const { username, password } = req.body;
-    // Your user creation logic goes here
-    // For example, you can use Mongoose to create a new user
-    
-    const newUser = new User({ username, password });
-    await newUser.save();
-    res.status(201).json({ message: 'User created successfully!' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error creating user' });
-  }
-});
-
-// Handle GET request to retrieve user information
-app.get('/users/:id', async (req, res) => {
-  try {
-    const userId = req.params.id;
-    // Your logic to retrieve user information goes here
-    // For example, you can use Mongoose to find a user by ID
-    const user = await User.findById(userId);
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
-    } else {
-      res.json(user);
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error retrieving user' });
-  }
-});
 
 app.all('*', (req, res) => {
   res.status(404);
